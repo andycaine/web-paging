@@ -1,0 +1,18 @@
+[project]
+name = "web-paging"
+version = "0.1.0"
+description = "Easy paging for the web."
+dependencies = []
+
+readme = "README.md"
+license = {text = "MIT License"}
+keywords = ["paging"]
+
+[project.urls]
+Homepage = "https://github.com/andycaine/web-paging"
+Documentation = "https://github.com/andycaine/web-paging?tab=readme-ov-file#asaa"
+Repository = "https://github.com/andycaine/web-paging.git"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
