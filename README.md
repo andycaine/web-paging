@@ -4,7 +4,7 @@ Easy paging for the web.
 
 ## Description
 
-`web-paging` is a simple library paginating through web responses.
+`web-paging` is a simple library for paginating through web responses.
 
 ## Getting started
 
