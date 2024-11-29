@@ -2,7 +2,7 @@
 name = "web-paging"
 version = "0.1.0"
 description = "Easy paging for the web."
-dependencies = []
+dependencies = ["MarkupSafe"]
 
 readme = "README.md"
 license = {text = "MIT License"}

@@ -1,4 +1,5 @@
 import pytest
+from markupsafe import Markup
 
 from web_paging import pageable
 
@@ -34,10 +35,23 @@ def response_factory():
 
 
 @pytest.fixture
-def pager(view, params, response_factory):
+def full_path_getter():
+    def _full_path_getter():
+        return '/foo/?bar=test_bar'
+    return _full_path_getter
+
+
+@pytest.fixture
+def pager(view, params, response_factory, full_path_getter):
     return pageable(template='foo',
                     param_getter=params.get,
+                    full_path_getter=full_path_getter,
                     response_factory=response_factory)(view)
+
+
+def assert_markup(markup, expected):
+    assert markup == expected
+    assert isinstance(markup, Markup)
 
 
 def assert_page(template, context, next, prev, items):
@@ -45,6 +59,12 @@ def assert_page(template, context, next, prev, items):
     assert context['web_paging_next_page'] == next
     assert context['web_paging_previous_page'] == prev
     assert context['page'] == items
+    pt = context['web_paging_paging_tokens']
+    assert_markup(context['web_paging_next_path'],
+                  f'/foo/?bar=test_bar&pt={pt}&page={next}')
+    if prev:
+        assert_markup(context['web_paging_previous_path'],
+                      f'/foo/?bar=test_bar&pt={pt}&page={prev}')
 
 
 def test_pageable(items, params, pager):
@@ -57,30 +77,21 @@ def test_pageable(items, params, pager):
 
     context, template = pager()
 
-    assert template == 'foo'
-    assert context['web_paging_next_page'] == 3
-    assert context['web_paging_previous_page'] == 1
-    assert context['page'] == items[10:20]
+    assert_page(template, context, 3, 1, items[10:20])
 
     params['pt'] = context['web_paging_paging_tokens']
     params['page'] = '1'
 
     context, template = pager()
 
-    assert template == 'foo'
-    assert context['web_paging_next_page'] == 2
-    assert context['web_paging_previous_page'] == 0
-    assert context['page'] == items[0:10]
+    assert_page(template, context, 2, 0, items[0:10])
 
 
 def test_invalid_page(items, params, pager):
     params['page'] = 'invalid-page'
     context, template = pager()
 
-    assert template == 'foo'
-    assert context['web_paging_next_page'] == 2
-    assert context['web_paging_previous_page'] == 0
-    assert context['page'] == items[0:10]
+    assert_page(template, context, 2, 0, items[0:10])
 
 
 def test_invalid_paging_token(items, params, pager):
@@ -88,7 +99,4 @@ def test_invalid_paging_token(items, params, pager):
     params['page'] = '3'
     context, template = pager()
 
-    assert template == 'foo'
-    assert context['web_paging_next_page'] == 2
-    assert context['web_paging_previous_page'] == 0
-    assert context['page'] == items[0:10]
+    assert_page(template, context, 2, 0, items[0:10])
