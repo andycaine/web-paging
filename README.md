@@ -75,7 +75,7 @@ The context also includes a couple of variables representing the page numbers of
 `web-paging` has built-in support for Flask.  Install with:
 
 ```bash
-pip install web-paging[Flask]
+pip install "web-paging[flask]"
 ```
 
 Then you can use the `web_paging.flask_pageable` decorator:
