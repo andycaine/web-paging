@@ -69,3 +69,23 @@ The `response_factory` function (`flask.render_template` in the example above) i
 `web_paging_previous_path` and `web_paging_next_path` are instances of `markupsafe.Markup`.
 
 The context also includes a couple of variables representing the page numbers of the previous and next pages. These variables are `web_paging_next_page` and `web_paging_previous_page`.
+
+## Flask Support
+
+`web-paging` has built-in support for Flask.  Install with:
+
+```bash
+pip install web-paging[Flask]
+```
+
+Then you can use the `web_paging.flask_pageable` decorator:
+
+```python
+from web_paging import flask_pageable
+
+@app.get('/pageable')
+@flask_pageable('items.html')
+def pageable_view(paging_key):
+    items, next_paging_key = find_items(paging_key=paging_key)
+    return dict(items=items), next_paging_key
+```
