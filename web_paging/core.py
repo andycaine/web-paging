@@ -63,18 +63,19 @@ def pageable(template, param_getter, full_path_getter,
             new_paging_tokens = _to_url_token(paging_keys)
 
             prev_page = page - 1 if page > 0 else None
-            ctx['web_paging_previous_page'] = prev_page
+            wp = {}
+            wp['previous_page'] = prev_page
             next_page = page + 1 if next_paging_key else None
-            ctx['web_paging_next_page'] = next_page
-            ctx['web_paging_paging_tokens'] = new_paging_tokens
+            wp['next_page'] = next_page
+            wp['paging_tokens'] = new_paging_tokens
             next_path = _build_pageable_path(full_path_getter(), next_page,
                                              new_paging_tokens)
-            ctx['web_paging_next_path'] = next_path
+            wp['next_path'] = next_path
 
             prev_path = _build_pageable_path(full_path_getter(), prev_page,
                                              new_paging_tokens)
-            ctx['web_paging_previous_path'] = prev_path
+            wp['previous_path'] = prev_path
 
-            return response_factory(template, **ctx)
+            return response_factory(template, web_paging=wp, **ctx)
         return decorated_fn
     return decorator

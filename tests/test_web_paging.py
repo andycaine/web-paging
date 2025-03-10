@@ -56,14 +56,15 @@ def assert_markup(markup, expected):
 
 def assert_page(template, context, next, prev, items):
     assert template == 'foo'
-    assert context['web_paging_next_page'] == next
-    assert context['web_paging_previous_page'] == prev
+    wp = context['web_paging']
+    assert wp['next_page'] == next
+    assert wp['previous_page'] == prev
     assert context['page'] == items
-    pt = context['web_paging_paging_tokens']
-    assert_markup(context['web_paging_next_path'],
+    pt = wp['paging_tokens']
+    assert_markup(wp['next_path'],
                   f'/foo/?bar=test_bar&pt={pt}&page={next}')
     if prev:
-        assert_markup(context['web_paging_previous_path'],
+        assert_markup(wp['previous_path'],
                       f'/foo/?bar=test_bar&pt={pt}&page={prev}')
 
 
@@ -72,14 +73,15 @@ def test_pageable(items, params, pager):
 
     assert_page(template, context, 2, 0, items[0:10])
 
-    params['pt'] = context['web_paging_paging_tokens']
+    wp = context['web_paging']
+    params['pt'] = wp['paging_tokens']
     params['page'] = '2'
 
     context, template = pager()
 
     assert_page(template, context, 3, 1, items[10:20])
 
-    params['pt'] = context['web_paging_paging_tokens']
+    params['pt'] = wp['paging_tokens']
     params['page'] = '1'
 
     context, template = pager()

@@ -47,18 +47,18 @@ def pageable_view(paging_key):
 
 The view is passed a paging key which can be used to identify the correct items to return. This is just a dict containing the attributes needed to find the correct results for the current page. For example, in a DynamoDB Query this dict would contain the attributes needed to create the ExclusiveStartKey. Similarly, the next_paging_key would be a dict created from the LastEvaluatedKey, containing the attributes needed to create the ExclusiveStartKey for the next page.
 
-The `response_factory` function (`flask.render_template` in the example above) is passed the template name and a context object, containing the context returned from the view function (`dict(items=items)` in this example), plus some variables to render pagination links:
+The `response_factory` function (`flask.render_template` in the example above) is passed the template name and a context object, containing the context returned from the view function (`dict(items=items)` in this example), plus a context variable to render pagination links:
 
 ```html
-{% if web_paging_paging_tokens %}
+{% if web_paging.paging_tokens %}
 <p>
-  {% if web_paging_previous_path %}
-    <a href="{{ web_paging_previous_path }}">
+  {% if web_paging.previous_path %}
+    <a href="{{ web_paging.previous_path }}">
       Previous page
     </a>
   {% endif %}
-  {% if web_paging_next_path %}
-    <a href="{{ web_paging_next_path }}">
+  {% if web_paging.next_path %}
+    <a href="{{ web_paging.next_path }}">
       Next page
     </a>
   {% endif %}
@@ -66,9 +66,9 @@ The `response_factory` function (`flask.render_template` in the example above) i
 {% endif %}
 ```
 
-`web_paging_previous_path` and `web_paging_next_path` are instances of `markupsafe.Markup`.
+`web_paging.previous_path` and `web_paging.next_path` are instances of `markupsafe.Markup`.
 
-The context also includes a couple of variables representing the page numbers of the previous and next pages. These variables are `web_paging_next_page` and `web_paging_previous_page`.
+The context also includes a couple of variables representing the page numbers of the previous and next pages. These variables are `web_paging.next_page` and `web_paging.previous_page`.
 
 ## Flask Support
 
